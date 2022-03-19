@@ -1,0 +1,14 @@
+.today-weather__swiper__item {
+    padding: 20px 0;
+    width: 100%;
+    text-align: center;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.3);
+    user-select: none;
+
+    &--hour,
+    &--temp {
+        font-size: 20px;
+        font-weight: 400;
+    }
+}
