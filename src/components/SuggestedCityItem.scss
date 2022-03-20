@@ -1,0 +1,22 @@
+.weather-control__search-bar__suggestions__item {
+    color: rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+    
+    &__wrapper {
+        padding: 10px 0;
+        margin: 0 20px;
+        border-top: 1px solid rgba(0, 0, 0, 0.7);
+    }
+    
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &--city {
+        font-size: 17px;
+    }
+    
+    &--region {
+        font-size: 15px;
+    }
+}
