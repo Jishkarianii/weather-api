@@ -52,10 +52,18 @@ function App() {
     })
   }, [cityName])
   
-  // To get forecast for searched city
+  // Get forecast for searched city
   const getSearchedCity = city => {
     setIsLoadedSuggested(false)
     getWeatherApi(city)
+  }
+  
+  // Get forecast for searched city on Enter
+  const getSearchedCityOnEnter = e => {
+    if (e.key !== "Enter" || !suggestedCity.length) return
+
+    setIsLoadedSuggested(false)
+    getWeatherApi(suggestedCity[0].name)
   }
 
   // For clear search bar
@@ -63,7 +71,7 @@ function App() {
     setCityName("")
   }
   
-  // To get Data from API
+  // Get Data from API
   const getWeatherApi = (city = defaultCity) => {
     fetch(`${forecastApi}${city}`)
     .then(res => res.json())
@@ -112,6 +120,7 @@ function App() {
                     onChange={e => {
                       setCityName(e.target.value)
                     }}
+                    onKeyUp={getSearchedCityOnEnter}
                   />
                   <i className="fa-solid fa-xmark" onClick={clearSearchBar} />
                 </div>
