@@ -216,3 +216,84 @@
 .swiper-pagination-bullet.swiper-pagination-bullet-active-next-next {
   background-color: $primary-color;
 }
+
+@media screen and (max-width: 850px) {
+  .current-weather {
+    margin-top: 0;
+    display: block;
+    
+    &__inner__first {
+      width: 100%;
+      justify-content: space-around;
+      border: none;
+    }
+    
+    &__inner__second {
+      margin-top: 20px;
+      margin-left: 0;
+      width: 100%;
+      border-top: 1px solid $primary-color;
+      border-bottom: 1px solid $primary-color;
+      text-align: center;
+    }
+  }
+
+  .today-weather {
+    margin-top: 30px;
+
+    &__swiper {
+      margin-top: 30px;
+    }
+  }
+
+  .weather-control {
+    padding: 0;
+  }
+}
+
+@media screen and (max-width: 430px) {
+  .weather-location {
+    &__name {
+      font-size: 32px;
+    }
+    
+    &__date {
+      font-size: 14px;
+    }
+  }
+
+  .current-weather {
+    &__inner__first {
+      &__temp--value {
+        font-size: 82px;
+      }
+  
+      &__temp--summary {
+        font-size: 18px;
+      }
+    }
+    
+    &__inner__second {
+      &__status--value {
+        font-size: 18px;
+      }
+  
+      &__status--div {
+        margin-top: 3px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .today-weather {
+    margin-top: 20px;
+  
+    &__title {
+      font-size: 18px;
+    }
+
+    &__swiper {
+      margin-top: 20px;
+    }
+  }
+}

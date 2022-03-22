@@ -33,6 +33,28 @@ function App() {
 
   const [tempSwither, setTempSwither] = useState(false)
 
+  const [viewSlides, setViewSlides] = useState(7)
+
+  // Calculate slides for first load
+  useEffect(() => {
+    calcSlidesPerView()
+  }, [])
+  
+  // Calculate slides on window resize
+  useEffect(() => {
+    window.addEventListener("resize", calcSlidesPerView)
+    
+    return () => {
+      window.removeEventListener("resize", calcSlidesPerView)
+    }
+  })
+  
+  // Get calculated slides 
+  const calcSlidesPerView = () => {
+    if (window.innerWidth > 800) return
+    setViewSlides(Math.floor(window.innerWidth / 100))
+  }
+
   // Get default city forecast
   useEffect(() => {
     getWeatherApi()
@@ -151,13 +173,15 @@ function App() {
                   )}
                 </div>
               </div>
-              <div 
-                className={`weather-control__swither ${tempSwither && "weather-control__swither--active"}`} 
-                onClick={swithTempMode}
-              >
-                <span className={`weather-control__swither--C-and-F ${tempSwither && "weather-control__swither--C-and-F--active"}`}>C°</span>
-                <span className={`weather-control__swither--C-and-F ${!tempSwither && "weather-control__swither--C-and-F--active"}`}>F°</span>
-              </div>
+              {!(isLoadedSuggested && viewSlides < 5) && (
+                <div 
+                  className={`weather-control__swither ${tempSwither && "weather-control__swither--active"}`} 
+                  onClick={swithTempMode}
+                >
+                  <span className={`weather-control__swither--C-and-F ${tempSwither && "weather-control__swither--C-and-F--active"}`}>C°</span>
+                  <span className={`weather-control__swither--C-and-F ${!tempSwither && "weather-control__swither--C-and-F--active"}`}>F°</span>
+                </div>
+              )}
             </div>
             <div className="weather-location">
               <h2 className="weather-location__name">{`${data.location.name}, ${data.location.country}`}</h2>
@@ -207,7 +231,7 @@ function App() {
             <div className="today-weather">
               <h3 className="today-weather__title">Today's weather</h3>
               <Swiper
-                slidesPerView={7}
+                slidesPerView={viewSlides}
                 spaceBetween={10}
                 grabCursor={true}
                 pagination={{

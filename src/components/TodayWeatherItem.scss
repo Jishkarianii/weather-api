@@ -14,3 +14,12 @@
         font-weight: 400;
     }
 }
+
+@media screen and (max-width: 430px) {
+    .today-weather__swiper__item {    
+        &--hour,
+        &--temp {
+            font-size: 18px;
+        }
+    }
+}
