@@ -1,11 +1,13 @@
+@import './scss/variables.scss';
+
 .weather-control__search-bar__suggestions__item {
-    color: rgba(0, 0, 0, 0.7);
+    color: $dark-color;
     cursor: pointer;
     
     &__wrapper {
         padding: 10px 0;
         margin: 0 20px;
-        border-top: 1px solid rgba(0, 0, 0, 0.7);
+        border-top: 1px solid $dark-color;
     }
     
     &:hover {

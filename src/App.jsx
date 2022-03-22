@@ -31,12 +31,14 @@ function App() {
   const [suggestedCity, setSuggestedCity] = useState([])
   const [isLoadedSuggested, setIsLoadedSuggested] = useState(false)
 
-  // To get default city forecast
+  const [tempSwither, setTempSwither] = useState(false)
+
+  // Get default city forecast
   useEffect(() => {
     getWeatherApi()
   }, [])
 
-  // To get suggested cities from API
+  // Get suggested cities from API
   useEffect(() => {
     fetch(`${searchApi}/${cityName}`)
     .then(res => res.json())
@@ -58,7 +60,7 @@ function App() {
     getWeatherApi(city)
   }
   
-  // Get forecast for searched city on Enter
+  // Get the first suggested city forecast on Enter
   const getSearchedCityOnEnter = e => {
     if (e.key !== "Enter" || !suggestedCity.length) return
 
@@ -69,6 +71,11 @@ function App() {
   // For clear search bar
   const clearSearchBar = () => {
     setCityName("")
+  }
+
+  // Change temperature mode from C° to F° or vice versa
+  const swithTempMode = () => {
+    setTempSwither(!tempSwither)
   }
   
   // Get Data from API
@@ -144,6 +151,13 @@ function App() {
                   )}
                 </div>
               </div>
+              <div 
+                className={`weather-control__swither ${tempSwither && "weather-control__swither--active"}`} 
+                onClick={swithTempMode}
+              >
+                <span className={`weather-control__swither--C-and-F ${tempSwither && "weather-control__swither--C-and-F--active"}`}>C°</span>
+                <span className={`weather-control__swither--C-and-F ${!tempSwither && "weather-control__swither--C-and-F--active"}`}>F°</span>
+              </div>
             </div>
             <div className="weather-location">
               <h2 className="weather-location__name">{`${data.location.name}, ${data.location.country}`}</h2>
@@ -155,13 +169,15 @@ function App() {
                   <img src={editedIcon} alt="icon" />
                 </div>
                 <div className="current-weather__inner__first__temp">
-                  <h2 className="current-weather__inner__first__temp--value">{`${Math.round(data.current.temp_c)}°`}</h2>
+                  <h2 className="current-weather__inner__first__temp--value">{`${Math.round(tempSwither ? data.current.temp_f : data.current.temp_c)}°`}</h2>
                   <p className="current-weather__inner__first__temp--summary">{data.current.condition.text}</p>
                 </div>
               </div>
               <div className="current-weather__inner__second">
                 <div className="current-weather__inner__second__status">
-                  <h3 className="current-weather__inner__second__status--value">{`${Math.round(data.forecast.forecastday[0].day.maxtemp_c)}°`}</h3>
+                  <h3 className="current-weather__inner__second__status--value">
+                    {`${Math.round(tempSwither ? data.forecast.forecastday[0].day.maxtemp_f : data.forecast.forecastday[0].day.maxtemp_c)}°`}
+                  </h3>
                   <p className="current-weather__inner__second__status--label">High</p>
                 </div>
                 <div className="current-weather__inner__second__status">
@@ -173,7 +189,9 @@ function App() {
                   <p className="current-weather__inner__second__status--label">Sunrise</p>
                 </div>
                 <div className="current-weather__inner__second__status">
-                  <h3 className="current-weather__inner__second__status--value">{`${Math.round(data.forecast.forecastday[0].day.mintemp_c)}°`}</h3>
+                  <h3 className="current-weather__inner__second__status--value">
+                    {`${Math.round(tempSwither ? data.forecast.forecastday[0].day.mintemp_f : data.forecast.forecastday[0].day.mintemp_c)}°`}
+                  </h3>
                   <p className="current-weather__inner__second__status--label">Low</p>
                 </div>
                 <div className="current-weather__inner__second__status">
@@ -203,7 +221,7 @@ function App() {
                     <TodayWeatherItem
                       hour={weather.time.split(" ")[1]}
                       icon={weather.condition.icon}
-                      temp={`${Math.round(weather.temp_c)}°`}
+                      temp={`${Math.round(tempSwither ? weather.temp_f : weather.temp_c)}°`}
                     />
                   </SwiperSlide>
                 ))}
