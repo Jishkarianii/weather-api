@@ -12,6 +12,7 @@ import "swiper/css/pagination";
 // import required modules
 import { Pagination } from "swiper";
 import SuggestedCityItem from './components/SuggestedCityItem';
+import StatusItem from './components/StatusItem';
 
 const forecastApi = "https://api.weatherapi.com/v1/forecast.json?key=ba776fa7fed54f97ab7105705221603&q=";
 const searchApi = "https://api.weatherapi.com/v1/search.json?key=ba776fa7fed54f97ab7105705221603&q=";
@@ -198,34 +199,30 @@ function App() {
                 </div>
               </div>
               <div className="current-weather__inner__second">
-                <div className="current-weather__inner__second__status">
-                  <h3 className="current-weather__inner__second__status--value">
-                    {`${Math.round(tempSwither ? data.forecast.forecastday[0].day.maxtemp_f : data.forecast.forecastday[0].day.maxtemp_c)}°`}
-                  </h3>
-                  <p className="current-weather__inner__second__status--label">High</p>
-                </div>
-                <div className="current-weather__inner__second__status">
-                  <h3 className="current-weather__inner__second__status--value">{`${Math.round(data.current.wind_mph)} mph`}</h3>
-                  <p className="current-weather__inner__second__status--label">Wind</p>
-                </div>
-                <div className="current-weather__inner__second__status">
-                  <h3 className="current-weather__inner__second__status--value">{data.forecast.forecastday[0].astro.sunrise}</h3>
-                  <p className="current-weather__inner__second__status--label">Sunrise</p>
-                </div>
-                <div className="current-weather__inner__second__status">
-                  <h3 className="current-weather__inner__second__status--value">
-                    {`${Math.round(tempSwither ? data.forecast.forecastday[0].day.mintemp_f : data.forecast.forecastday[0].day.mintemp_c)}°`}
-                  </h3>
-                  <p className="current-weather__inner__second__status--label">Low</p>
-                </div>
-                <div className="current-weather__inner__second__status">
-                  <h3 className="current-weather__inner__second__status--value">{`${data.current.humidity}%`}</h3>
-                  <p className="current-weather__inner__second__status--label">Humidity</p>
-                </div>
-                <div className="current-weather__inner__second__status">
-                  <h3 className="current-weather__inner__second__status--value">{data.forecast.forecastday[0].astro.sunset}</h3>
-                  <p className="current-weather__inner__second__status--label">Sunset</p>
-                </div>
+                <StatusItem 
+                  value={`${Math.round(tempSwither ? data.forecast.forecastday[0].day.maxtemp_f : data.forecast.forecastday[0].day.maxtemp_c)}°`}
+                  label={"High"}
+                />
+                <StatusItem 
+                  value={`${Math.round(data.current.wind_mph)} mph`}
+                  label={"Wind"}
+                />
+                <StatusItem 
+                  value={data.forecast.forecastday[0].astro.sunrise}
+                  label={"Sunrise"}
+                />
+                <StatusItem 
+                  value={`${Math.round(tempSwither ? data.forecast.forecastday[0].day.mintemp_f : data.forecast.forecastday[0].day.mintemp_c)}°`}
+                  label={"Low"}
+                />
+                <StatusItem 
+                  value={`${data.current.humidity}%`}
+                  label={"Humidity"}
+                />
+                <StatusItem 
+                  value={data.forecast.forecastday[0].astro.sunset}
+                  label={"Sunset"}
+                />
               </div>
             </div>
             <div className="today-weather">

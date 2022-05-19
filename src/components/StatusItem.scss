@@ -1,0 +1,52 @@
+@import './scss/variables.scss';
+
+.current-weather {
+    &__inner__second {
+        padding: 20px;
+        margin-left: 30px;
+        width: 50%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 20px;
+    
+        &__status--value {
+          font-size: 26px;
+          font-weight: 400;
+        }
+    
+        &__status--div {
+          margin-top: 3px;
+          font-size: 18px;
+          font-weight: 400;
+          opacity: 0.6;
+        }
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .current-weather { 
+        &__inner__second {
+          margin-top: 20px;
+          margin-left: 0;
+          width: 100%;
+          border-top: 1px solid $primary-color;
+          border-bottom: 1px solid $primary-color;
+          text-align: center;
+        }
+    }
+}
+
+@media screen and (max-width: 430px) {
+    .current-weather {
+        &__inner__second {
+          &__status--value {
+            font-size: 18px;
+          }
+      
+          &__status--div {
+            margin-top: 3px;
+            font-size: 14px;
+          }
+        }
+    }
+}
