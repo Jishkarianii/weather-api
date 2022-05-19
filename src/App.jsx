@@ -18,7 +18,7 @@ const forecastApi = "https://api.weatherapi.com/v1/forecast.json?key=ba776fa7fed
 const searchApi = "https://api.weatherapi.com/v1/search.json?key=ba776fa7fed54f97ab7105705221603&q=";
 
 // Global variables
-const defaultCity = "Kutaissi";
+const defaultCity = "Tbilisi";
 const showSuggestedCity = 5;
 
 function App() {
@@ -55,11 +55,24 @@ function App() {
     if (window.innerWidth > 800) return
     setViewSlides(Math.floor(window.innerWidth / 100))
   }
-
-  // Get default city forecast
+  
+  // Get forecast by location or default city  
   useEffect(() => {
+    getLocation()
     getWeatherApi()
   }, [])
+  
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(getWeatherByPosition);
+    } else { 
+      console.log("Geolocation is not supported by this browser.");
+    }
+  }
+  
+  const getWeatherByPosition = (position) => {
+    getWeatherApi(`${position.coords.latitude},${position.coords.longitude}`)
+  }
 
   // Get suggested cities from API
   useEffect(() => {
