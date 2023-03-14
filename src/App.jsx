@@ -150,7 +150,7 @@ function App() {
     <div className="App">
       {isLoadedData && (
         <>
-          <div className={`bg ${data.current.is_day ? "bg__day" : "bg__night"}`}></div>
+          <div className="bg"></div>
           <div className="weather-cont">
             <div className="weather-control">
               <div className="weather-control__search-bar">
