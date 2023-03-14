@@ -194,7 +194,7 @@ function App() {
                       if (idx < showSuggestedCity) {
                         return (
                           <SuggestedCityItem
-                            key={city.id}
+                            key={idx}
                             city={city.name}
                             region={city.region}
                             country={city.country}
