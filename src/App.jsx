@@ -1,6 +1,6 @@
-import './App.scss';
-import { useEffect, useState } from 'react';
-import TodayWeatherItem from './components/TodayWeatherItem';
+import "./App.scss";
+import { useEffect, useState } from "react";
+import TodayWeatherItem from "./components/TodayWeatherItem";
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -11,140 +11,157 @@ import "swiper/css/pagination";
 
 // import required modules
 import { Pagination } from "swiper";
-import SuggestedCityItem from './components/SuggestedCityItem';
-import StatusItem from './components/StatusItem';
+import SuggestedCityItem from "./components/SuggestedCityItem";
+import StatusItem from "./components/StatusItem";
 
-const forecastApi = "https://api.weatherapi.com/v1/forecast.json?key=ba776fa7fed54f97ab7105705221603&q=";
-const searchApi = "https://api.weatherapi.com/v1/search.json?key=ba776fa7fed54f97ab7105705221603&q=";
+const forecastApi =
+  "https://api.weatherapi.com/v1/forecast.json?key=ba776fa7fed54f97ab7105705221603&q=";
+const searchApi =
+  "https://api.weatherapi.com/v1/search.json?key=ba776fa7fed54f97ab7105705221603&q=";
 
 // Global variables
 const defaultCity = "Tbilisi";
 const showSuggestedCity = 5;
 
 function App() {
-  const [data, setData] = useState([])
-  const [isLoadedData, setIsLoadedData] = useState(false)
-  
-  const [editedDate, setEditedDate] = useState("")
-  const [editedIcon, setEditedIcon] = useState("")
-  
-  const [cityName, setCityName] = useState("")
-  const [suggestedCity, setSuggestedCity] = useState([])
-  const [isLoadedSuggested, setIsLoadedSuggested] = useState(false)
+  const [data, setData] = useState([]);
+  const [isLoadedData, setIsLoadedData] = useState(false);
 
-  const [tempSwither, setTempSwither] = useState(false)
+  const [editedDate, setEditedDate] = useState("");
+  const [editedIcon, setEditedIcon] = useState("");
 
-  const [viewSlides, setViewSlides] = useState(7)
+  const [cityName, setCityName] = useState("");
+  const [suggestedCity, setSuggestedCity] = useState([]);
+  const [isLoadedSuggested, setIsLoadedSuggested] = useState(false);
+
+  const [tempSwither, setTempSwither] = useState(false);
+
+  const [viewSlides, setViewSlides] = useState(7);
+
+  // Get forecast by location or default city
+  useEffect(() => {
+    getLocation();
+    
+    navigator.permissions &&
+      navigator.permissions
+        .query({ name: "geolocation" })
+        .then((PermissionStatus) => {
+          if (PermissionStatus.state === "granted") {
+            //allowed
+            getLocation();
+          } else if (PermissionStatus.state === "prompt") {
+            // prompt - not yet grated or denied
+            getWeatherApi();
+          } else {
+            //denied
+            getWeatherApi();
+          }
+        });
+  }, []);
 
   // Calculate slides for first load
   useEffect(() => {
-    calcSlidesPerView()
-  }, [])
-  
+    calcSlidesPerView();
+  }, []);
+
   // Calculate slides on window resize
   useEffect(() => {
-    window.addEventListener("resize", calcSlidesPerView)
-    
+    window.addEventListener("resize", calcSlidesPerView);
+
     return () => {
-      window.removeEventListener("resize", calcSlidesPerView)
-    }
-  })
-  
-  // Get calculated slides 
+      window.removeEventListener("resize", calcSlidesPerView);
+    };
+  });
+
+  // Get calculated slides
   const calcSlidesPerView = () => {
-    if (window.innerWidth > 800) return
-    setViewSlides(Math.floor(window.innerWidth / 100))
-  }
-  
-  // Get forecast by location or default city  
-  useEffect(() => {
-    getLocation()
-    getWeatherApi()
-  }, [])
-  
+    if (window.innerWidth > 800) return;
+    setViewSlides(Math.floor(window.innerWidth / 100));
+  };
+
   const getLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(getWeatherByPosition);
-    } else { 
+    } else {
       console.log("Geolocation is not supported by this browser.");
     }
-  }
-  
+  };
+
   const getWeatherByPosition = (position) => {
-    getWeatherApi(`${position.coords.latitude},${position.coords.longitude}`)
-  }
+    getWeatherApi(`${position.coords.latitude},${position.coords.longitude}`);
+  };
 
   // Get suggested cities from API
   useEffect(() => {
     fetch(`${searchApi}/${cityName}`)
-    .then(res => res.json())
-    .then(data => {
-      setSuggestedCity(data)
-      
-      // Check if is suggested cities
-      if (data.length) {
-        setIsLoadedSuggested(true)
-      } else {
-        setIsLoadedSuggested(false)
-      }
-    })
-  }, [cityName])
-  
-  // Get forecast for searched city
-  const getSearchedCity = city => {
-    setIsLoadedSuggested(false)
-    getWeatherApi(city)
-  }
-  
-  // Get the first suggested city forecast on Enter
-  const getSearchedCityOnEnter = e => {
-    if (e.key !== "Enter" || !suggestedCity.length) return
+      .then((res) => res.json())
+      .then((data) => {
+        setSuggestedCity(data);
 
-    setIsLoadedSuggested(false)
-    getWeatherApi(suggestedCity[0].name)
-  }
+        // Check if is suggested cities
+        if (data.length) {
+          setIsLoadedSuggested(true);
+        } else {
+          setIsLoadedSuggested(false);
+        }
+      });
+  }, [cityName]);
+
+  // Get forecast for searched city
+  const getSearchedCity = (city) => {
+    setIsLoadedSuggested(false);
+    getWeatherApi(city);
+  };
+
+  // Get the first suggested city forecast on Enter
+  const getSearchedCityOnEnter = (e) => {
+    if (e.key !== "Enter" || !suggestedCity.length) return;
+
+    setIsLoadedSuggested(false);
+    getWeatherApi(suggestedCity[0].name);
+  };
 
   // For clear search bar
   const clearSearchBar = () => {
-    setCityName("")
-  }
+    setCityName("");
+  };
 
   // Change temperature mode from C° to F° or vice versa
   const swithTempMode = () => {
-    setTempSwither(!tempSwither)
-  }
-  
+    setTempSwither(!tempSwither);
+  };
+
   // Get Data from API
   const getWeatherApi = (city = defaultCity) => {
     fetch(`${forecastApi}${city}`)
-    .then(res => res.json())
-    .then(data => {
-      setData(data)
-      dateHandler(data)
-      iconHandler(data)
-      setIsLoadedData(true)
-    })
-  }
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+        dateHandler(data);
+        iconHandler(data);
+        setIsLoadedData(true);
+      });
+  };
 
   // To get the correct date
-  const dateHandler = data => {
-    const currentDate = new Date(data.location.localtime_epoch)
-    const editingDate = currentDate.toDateString().split(" ")
-    editingDate.pop()
-    const doneDateEditing = editingDate.join(" ")
+  const dateHandler = (data) => {
+    const currentDate = new Date(data.location.localtime_epoch);
+    const editingDate = currentDate.toDateString().split(" ");
+    editingDate.pop();
+    const doneDateEditing = editingDate.join(" ");
 
-    setEditedDate(doneDateEditing)
-  }
+    setEditedDate(doneDateEditing);
+  };
 
   // To get the bigger icon
-  const iconHandler = data => {
+  const iconHandler = (data) => {
     const currentIcon = data.current.condition.icon;
-    const editingIcon = currentIcon.split("/")
+    const editingIcon = currentIcon.split("/");
     editingIcon[4] = "128x128";
-    const doneIconEditing = editingIcon.join("/")
+    const doneIconEditing = editingIcon.join("/");
 
-    setEditedIcon(doneIconEditing)
-  }
+    setEditedIcon(doneIconEditing);
+  };
 
   return (
     <div className="App">
@@ -154,46 +171,64 @@ function App() {
           <div className="weather-cont">
             <div className="weather-control">
               <div className="weather-control__search-bar">
-                <div className={`weather-control__search-bar__input ${isLoadedSuggested && "active"}`}>
+                <div
+                  className={`weather-control__search-bar__input ${
+                    isLoadedSuggested && "active"
+                  }`}
+                >
                   <i className="fa-solid fa-magnifying-glass-location" />
-                  <input 
+                  <input
                     className="weather-control__search-bar__input--value"
                     placeholder="Search city"
                     value={cityName}
-                    onChange={e => {
-                      setCityName(e.target.value)
+                    onChange={(e) => {
+                      setCityName(e.target.value);
                     }}
                     onKeyUp={getSearchedCityOnEnter}
                   />
                   <i className="fa-solid fa-xmark" onClick={clearSearchBar} />
                 </div>
                 <div className="weather-control__search-bar__suggestions">
-                  {isLoadedSuggested && (
+                  {isLoadedSuggested &&
                     suggestedCity.map((city, idx) => {
                       if (idx < showSuggestedCity) {
                         return (
-                          <SuggestedCityItem 
+                          <SuggestedCityItem
                             key={city.id}
                             city={city.name}
                             region={city.region}
                             country={city.country}
                             getSearchedCity={() => {
-                              getSearchedCity(city.name)
+                              getSearchedCity(city.name);
                             }}
                           />
-                        )
+                        );
                       }
-                    })
-                  )}
+                    })}
                 </div>
               </div>
               {!(isLoadedSuggested && viewSlides < 5) && (
-                <div 
-                  className={`weather-control__swither ${tempSwither && "weather-control__swither--active"}`} 
+                <div
+                  className={`weather-control__swither ${
+                    tempSwither && "weather-control__swither--active"
+                  }`}
                   onClick={swithTempMode}
                 >
-                  <span className={`weather-control__swither--C-and-F ${tempSwither && "weather-control__swither--C-and-F--active"}`}>C°</span>
-                  <span className={`weather-control__swither--C-and-F ${!tempSwither && "weather-control__swither--C-and-F--active"}`}>F°</span>
+                  <span
+                    className={`weather-control__swither--C-and-F ${
+                      tempSwither && "weather-control__swither--C-and-F--active"
+                    }`}
+                  >
+                    C°
+                  </span>
+                  <span
+                    className={`weather-control__swither--C-and-F ${
+                      !tempSwither &&
+                      "weather-control__swither--C-and-F--active"
+                    }`}
+                  >
+                    F°
+                  </span>
                 </div>
               )}
             </div>
@@ -207,32 +242,44 @@ function App() {
                   <img src={editedIcon} alt="icon" />
                 </div>
                 <div className="current-weather__inner__first__temp">
-                  <h2 className="current-weather__inner__first__temp--value">{`${Math.round(tempSwither ? data.current.temp_f : data.current.temp_c)}°`}</h2>
-                  <p className="current-weather__inner__first__temp--summary">{data.current.condition.text}</p>
+                  <h2 className="current-weather__inner__first__temp--value">{`${Math.round(
+                    tempSwither ? data.current.temp_f : data.current.temp_c
+                  )}°`}</h2>
+                  <p className="current-weather__inner__first__temp--summary">
+                    {data.current.condition.text}
+                  </p>
                 </div>
               </div>
               <div className="current-weather__inner__second">
-                <StatusItem 
-                  value={`${Math.round(tempSwither ? data.forecast.forecastday[0].day.maxtemp_f : data.forecast.forecastday[0].day.maxtemp_c)}°`}
+                <StatusItem
+                  value={`${Math.round(
+                    tempSwither
+                      ? data.forecast.forecastday[0].day.maxtemp_f
+                      : data.forecast.forecastday[0].day.maxtemp_c
+                  )}°`}
                   label={"High"}
                 />
-                <StatusItem 
+                <StatusItem
                   value={`${Math.round(data.current.wind_mph)} mph`}
                   label={"Wind"}
                 />
-                <StatusItem 
+                <StatusItem
                   value={data.forecast.forecastday[0].astro.sunrise}
                   label={"Sunrise"}
                 />
-                <StatusItem 
-                  value={`${Math.round(tempSwither ? data.forecast.forecastday[0].day.mintemp_f : data.forecast.forecastday[0].day.mintemp_c)}°`}
+                <StatusItem
+                  value={`${Math.round(
+                    tempSwither
+                      ? data.forecast.forecastday[0].day.mintemp_f
+                      : data.forecast.forecastday[0].day.mintemp_c
+                  )}°`}
                   label={"Low"}
                 />
-                <StatusItem 
+                <StatusItem
                   value={`${data.current.humidity}%`}
                   label={"Humidity"}
                 />
-                <StatusItem 
+                <StatusItem
                   value={data.forecast.forecastday[0].astro.sunset}
                   label={"Sunset"}
                 />
@@ -245,7 +292,7 @@ function App() {
                 spaceBetween={10}
                 grabCursor={true}
                 pagination={{
-                  dynamicBullets: true
+                  dynamicBullets: true,
                 }}
                 modules={[Pagination]}
                 className="today-weather__swiper"
@@ -255,7 +302,9 @@ function App() {
                     <TodayWeatherItem
                       hour={weather.time.split(" ")[1]}
                       icon={weather.condition.icon}
-                      temp={`${Math.round(tempSwither ? weather.temp_f : weather.temp_c)}°`}
+                      temp={`${Math.round(
+                        tempSwither ? weather.temp_f : weather.temp_c
+                      )}°`}
                     />
                   </SwiperSlide>
                 ))}
